@@ -1,5 +1,6 @@
 package com.vshekarappa.popularmovies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vshekarappa.popularmovies.utilities.MovieDetailJsonUtils;
 import com.vshekarappa.popularmovies.utilities.NetworkUtils;
@@ -16,24 +18,12 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieDetailAdapter.IMoviePosterClickHandler {
 
+    private static final String DETAIL_MOVIE_ID = "movie_id";
     private MovieDetailAdapter movieAdapter;
 
     private static final String API_KEY = "5c25eaa5f74d80e33ae9df32e7b1ff55";
-
-    MovieDetail[] movieDetails1 = {
-            new MovieDetail("Cupcake", R.drawable.cupcake),
-            new MovieDetail("Donut", R.drawable.donut),
-            new MovieDetail("Eclair", R.drawable.eclair),
-            new MovieDetail("Froyo", R.drawable.froyo),
-            new MovieDetail("GingerBread", R.drawable.gingerbread),
-            new MovieDetail("Honeycomb", R.drawable.honeycomb),
-            new MovieDetail("Ice Cream Sandwich", R.drawable.icecream),
-			new MovieDetail("Jelly Bean",  R.drawable.jellybean),
-			new MovieDetail("KitKat",  R.drawable.kitkat),
-			new MovieDetail("Lollipop",  R.drawable.lollipop)
-    };
 
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicator;
@@ -83,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onClick(MovieDetail movieDetail) {
+//        Toast.makeText(this,movieDetail.movieName,Toast.LENGTH_LONG).show();
+
+        Intent intentDetail = new Intent(this,DetailActivity.class);
+        intentDetail.putExtra(Intent.EXTRA_TEXT,movieDetail.movieName);
+        startActivity(intentDetail);
+    }
 
 
     public class FetchMovieDataTask extends AsyncTask<String,Void, List<MovieDetail>>  {

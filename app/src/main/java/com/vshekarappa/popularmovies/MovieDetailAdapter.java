@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class MovieDetailAdapter extends ArrayAdapter<MovieDetail> {
@@ -17,13 +19,21 @@ public class MovieDetailAdapter extends ArrayAdapter<MovieDetail> {
 
     private List<MovieDetail> mMovieDetailList;
 
+    private IMoviePosterClickHandler moviePosterClickHandler;
+
     public MovieDetailAdapter(@NonNull Context context, @NonNull List<MovieDetail> movieDetailList) {
         super(context, 0, movieDetailList);
+        moviePosterClickHandler = (IMoviePosterClickHandler) context;
+    }
+
+
+    public interface IMoviePosterClickHandler  {
+        void onClick(MovieDetail movieDetail);
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         MovieDetail movieDetail = getItem(position);
 
@@ -37,12 +47,29 @@ public class MovieDetailAdapter extends ArrayAdapter<MovieDetail> {
         }
 
         ImageView posterView = (ImageView) convertView.findViewById(R.id.poster_image);
-        posterView.setImageResource(movieDetail.imageUrl);
+        //posterView.setImageResource(movieDetail.imageUrl);
 
         TextView movieNameView = (TextView) convertView.findViewById(R.id.tv_movie_title);
         movieNameView.setText(movieDetail.movieName);
 
+        Picasso.with(getContext())
+                .load(movieDetail.posterPath)
+                .into(posterView);
+
+        posterView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MovieDetail movieDetailSelected = getItem(position);
+                moviePosterClickHandler.onClick(movieDetailSelected);
+            }
+        });
+
         return convertView;
+    }
+
+    class ViewHolder {
+        TextView movieName;
+        ImageView posterView;
     }
 
     public void setMovieData(List<MovieDetail> movieDetailList) {
